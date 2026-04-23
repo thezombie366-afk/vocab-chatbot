@@ -5,6 +5,7 @@ import json
 import ai_service
 import random
 import Data_base_setting as db_set
+import test_audio 
 word_history=db_set.get_all_words()
 
 
@@ -36,9 +37,17 @@ with st.expander("Xem lịch sử tra cứu"):
         st.write("Lịch sử của bạn đang trống.")
     else:
         for item in word_history:
-                with st.expander(f"{item['word']} ({item['part_of_speech']})"):
+            with st.expander(f"{item['word']} ({item['part_of_speech']})"):
                     st.write("**Định nghĩa:**", item["definition"])
                     st.write("**Ví dụ:**", item["example"])
+                    audio_file = test_audio .text_to_speech_and_play(item['word'], lang="en")
+
+                    if audio_file and os.path.exists(audio_file):
+                        with open(audio_file, "rb") as f:
+                            audio_bytes = f.read()
+                        st.audio(audio_bytes, format="audio/mp3")
+                    else:
+                        st.error("Audio file was not created.")
 #-------------------------------------------
 
 
@@ -180,6 +189,7 @@ if user_input := st.chat_input("Nhập từ khóa hoặc lệnh (lookup, quiz, g
                 details["word"] = word_to_lookup
                 db_set.save_word(details)
                 response = f"**{word_to_lookup.capitalize()}**\n- Định nghĩa: {details['definition']}\n- Loại từ: {details['part_of_speech']}\n- Ví dụ: {details['example']}"
+
             else:
                 response = "Xin lỗi, không tìm thấy kết quả."
         else:
