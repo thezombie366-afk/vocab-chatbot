@@ -1,8 +1,4 @@
 from gtts import gTTS
-from io import BytesIO
-import pygame
-import tempfile
-import os
 # Testing python test_audio.py
 
 def text_to_speech_and_play(text, lang="en"):
